@@ -41,17 +41,24 @@ def generate_launch_description():
         parameters=[
             str(parameters_file_path),
             {'generate_esdf': True},      
+
+            # Visualization Timers (Faster updates)
+            {'update_esdf_every_n_sec': 0.5},  # <--- 1.0(Origin) to 5.0
+            {'update_mesh_every_n_sec': 10.0}, # <--- 1.0(Origin) to 5.0
+
+            # What to Publish
             {'publish_esdf_map': True},
             {'publish_pointclouds': True},  # <--- ADD THIS LINE
             {'publish_slices': True},       # <--- ADD THIS LINE (Default is False)
-            {'slice_level': 0.75},           # <--- Optional: Height in meters to cut the slice
-            {'update_esdf_every_n_sec': 10.0},  # <--- 1.0(Origin) to 5.0
-            {'tsdf_voxel_size': 0.10}, # <--- ADJUSTED LINE 0.05(Origin) to 0.15 
+            {'slice_level': 0.8},           # <--- Optional: Height in meters to cut the slice
+
+            # TSDF Integration Settings
+            {'tsdf_voxel_size': 0.05}, # <--- ADJUSTED LINE 0.05(Origin) to 0.15 
             {'tsdf_voxels_per_side': 16},
             {'voxel_carving_enabled': True},
-            {'color_mode': 'color'},
+            {'color_mode': 'color'},    
             {'use_tf_transforms': False},
-            {'update_mesh_every_n_sec': 10.0}, # <--- 1.0(Origin) to 5.0
+          
             {'min_time_between_msgs_sec': 0.0},
             {'method': 'fast'},  # Simple / Merged / Fast
             {'use_const_weight': False},
