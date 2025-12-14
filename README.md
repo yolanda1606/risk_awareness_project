@@ -132,7 +132,7 @@ I'll proceed to replace the old "Key Parameters" section in the README with the 
 ## Running Dataset Experiments
 
 ``` bash
-ros2 launch voxblox_ros cow_and_lady_dataset.launch.py
+ros2 launch voxblox_ros cow_and_lady_dataset.launch.py bag_file:=data_ros2
 ```
 
 ## 🔧 Key Parameters
@@ -170,7 +170,7 @@ Use RViz displays:
 
 Author: Joel Agustin Sanchez\
 Supervisors: Prof. Dr.-Ing. Steven Liu, M.Sc. Chen Cai\
-Institution: RPTU Kaiserslautern-Landau
+Institution: RPTU Kaiserslautern-Landau, Germany
 
 # 📄 Citation
 
