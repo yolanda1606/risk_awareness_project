@@ -10,7 +10,7 @@ def generate_launch_description():
     
     # 1. SETUP: Define paths
     pkg_panda = get_package_share_directory('panda_description')
-    xacro_file = os.path.join(pkg_panda, 'urdf', 'panda.urdf')
+    xacro_file = os.path.join(pkg_panda, 'urdf', 'panda.urdf.xacro')
     gz_resource_path = os.path.dirname(pkg_panda)
 
     # 2. ENVIRONMENT VARIABLES

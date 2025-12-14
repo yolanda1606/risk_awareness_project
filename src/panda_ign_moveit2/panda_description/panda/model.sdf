@@ -585,10 +585,8 @@
             <far>5</far>
           </clip>
         </camera>
-        <plugin name='ignition::gazebo::systems::Sensors' filename='libignition-gazebo-sensors-system.so'>
-          <render_engine>ogre2</render_engine>
-        </plugin>
-        <pose>0.0282843 -0.0282843 0.147 0 -1.5708 -2.3554</pose>
+        <plugin name='ignition::gazebo::systems::Sensors' filename='libignition-gazebo-sensors-system.so'/>
+        <pose>0.0282843 -0.0282843 0.147 -1.5707 5.55112e-17 -2.3561</pose>
       </sensor>
     </link>
     <joint name='panda_finger_joint1' type='prismatic'>

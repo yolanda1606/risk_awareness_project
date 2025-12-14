@@ -364,7 +364,7 @@
       <state_interface name="effort"/>
     </joint>
     <joint name="panda_joint2">
-      <param name="initial_position">-0.7853981633974483</param>
+      <param name="initial_position">0.0</param>
       <command_interface name="effort"/>
       <state_interface name="position"/>
       <state_interface name="velocity"/>
@@ -378,7 +378,7 @@
       <state_interface name="effort"/>
     </joint>
     <joint name="panda_joint4">
-      <param name="initial_position">-2.356194490192345</param>
+      <param name="initial_position">-1.57</param>
       <command_interface name="effort"/>
       <state_interface name="position"/>
       <state_interface name="velocity"/>
@@ -392,14 +392,14 @@
       <state_interface name="effort"/>
     </joint>
     <joint name="panda_joint6">
-      <param name="initial_position">1.5707963267948966</param>
+      <param name="initial_position">1.57</param>
       <command_interface name="effort"/>
       <state_interface name="position"/>
       <state_interface name="velocity"/>
       <state_interface name="effort"/>
     </joint>
     <joint name="panda_joint7">
-      <param name="initial_position">0.7853981633974483</param>
+      <param name="initial_position">0.785</param>
       <command_interface name="effort"/>
       <state_interface name="position"/>
       <state_interface name="velocity"/>
@@ -555,7 +555,7 @@
   </gazebo>
   <gazebo reference="panda_hand">
     <sensor name="camera" type="depth">
-      <pose>0.04 0 0.04 0 -1.57 -1.57</pose>
+      <pose>0.04 0 0.04 -1.5707 0 -1.5707</pose>
       <visualize>true</visualize>
       <update_rate>30</update_rate>
       <camera>
@@ -571,7 +571,7 @@
         </clip>
       </camera>
       <plugin filename="libignition-gazebo-sensors-system.so" name="ignition::gazebo::systems::Sensors">
-        <render_engine>ogre2</render_engine>
+        
       </plugin>
     </sensor>
   </gazebo>
