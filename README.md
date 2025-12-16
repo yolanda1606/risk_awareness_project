@@ -1,8 +1,6 @@
 # Uncertainty-Aware MPC: Probabilistic SDFs & Active Visibility
 
-![ROS 2 Humble](https://img.shields.io/badge/ROS_2-Humble-3499cd.svg)\
-![Status](https://img.shields.io/badge/Status-Master's_Thesis-orange.svg)\
-![Build](https://img.shields.io/badge/Build-Colcon-blue.svg)
+![ROS 2 Humble](https://img.shields.io/badge/ROS_2-Humble-3499cd.svg) ![Status](https://img.shields.io/badge/Status-Master's_Thesis-orange.svg) ![Build](https://img.shields.io/badge/Build-Colcon-blue.svg)
 
 This repository contains the implementation for the Master's Thesis:\
 ***"Uncertainty-Aware MPC: Probabilistic SDFs and Active Visibility for
@@ -13,6 +11,8 @@ ROS 2 migration**) with a **Model Predictive Control (MPC)** planner.\
 It enables a **Franka Emika Panda** robot to navigate **dynamic,
 cluttered environments** while maintaining a probabilistic world model
 and actively maximizing target visibility ("peeking").
+
+![Screenshot of the robot](src/thesis_sim/images/robot.png)
 
 ## 📌 Project Overview
 
@@ -115,16 +115,6 @@ ros2 launch voxblox_ros cow_and_lady_dataset.launch.py   tsdf_server.tsdf_voxel_
 
 ---
 
-**Notes & Fixes made**
-- Fixed the incorrect `0.055cm` unit in the previous README — it is almost certainly intended to be **0.055 m** or **0.05 m**. Standard practice is to list voxel sizes in **meters**.  
-- Added `tsdf_truncation_distance` and `memory_decay_half_life` parameters which are commonly needed for TSDF/ESDF tuning and uncertainty handling.  
-- Added recommended ranges and clear types/units to avoid parameter confusion.
-
-If you'd like, I will now:
-- (A) Update the `README.md` in the workspace with this corrected section (done below), **and**  
-- (B) produce a downloadable updated `README.md` link.
-
-I'll proceed to replace the old "Key Parameters" section in the README with the new one.
 
 
 # 🚀 Usage
