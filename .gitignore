@@ -15,6 +15,10 @@ log/
 __pycache__/
 *.pyc
 
+# Frames and PDF
+*.gv
+
+
 # Misc
 *.log
 :Zone.Identifier

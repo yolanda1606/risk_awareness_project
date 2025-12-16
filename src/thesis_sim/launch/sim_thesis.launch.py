@@ -42,7 +42,7 @@ def generate_launch_description():
     #    cmd=['ign', 'gazebo', '-r', 'empty.sdf'],
     #   output='screen'
     
-    cmd=['ign', 'gazebo', '-r', '/home/josa/thesis/obstacles.sdf'],
+    cmd=['ign', 'gazebo', '-r', '/home/josa/thesis/src/panda_ign_moveit2/scenarios/obstacles.sdf'],
     output='screen'
 )
 
