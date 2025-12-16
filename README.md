@@ -147,19 +147,21 @@ Use RViz displays:
 - **ESDF Slice**  
   Topic: `/voxblox_node/esdf_slice`
 
-## 🛠️ Migration Status
+## 🛠️ Status
 
 | Component | Status |
 |----------|--------|
 | TSDF Server | ✅ |
 | ESDF Server | ✅ |
+| Test Simulation  | ✅ |
 | Mesh Integrator | 🛠️ (Disabled by default) |
+| Decay Parameter | ❌ PENDING |
 | Evaluator Nodes | ❌ Not migrated |
 
 # 👨‍🎓 Thesis Information
 
 Author: Joel Agustin Sanchez\
-Supervisors: Prof. Dr.-Ing. Steven Liu, M.Sc. Chen Cai\
+Supervisors: M.Sc. Chen Cai, Prof. Dr.-Ing. Steven Liu\
 Institution: RPTU Kaiserslautern-Landau, Germany
 
 # 📄 Citation
