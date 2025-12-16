@@ -39,9 +39,12 @@ def generate_launch_description():
     )
 
     gazebo = ExecuteProcess(
-        cmd=['ign', 'gazebo', '-r', 'empty.sdf'],
-        output='screen'
-    )
+    #    cmd=['ign', 'gazebo', '-r', 'empty.sdf'],
+    #   output='screen'
+    
+    cmd=['ign', 'gazebo', '-r', '/home/josa/thesis/obstacles.sdf'],
+    output='screen'
+)
 
     spawn_entity = Node(
         package='ros_gz_sim',
@@ -60,13 +63,15 @@ def generate_launch_description():
             # 2. Joint States
             #'/world/empty/model/panda_robot/joint_state@sensor_msgs/msg/JointState[ignition.msgs.Model',
             # 3. Point Cloud (With Explicit Types)
-            '/world/empty/model/panda_robot/link/panda_link7/sensor/camera/depth_image/points@sensor_msgs/msg/PointCloud2[ignition.msgs.PointCloudPacked',
+            #'/world/empty/model/panda_robot/link/panda_link7/sensor/camera/depth_image/points@sensor_msgs/msg/PointCloud2[ignition.msgs.PointCloudPacked',
+            '/world/obstacle_world/model/panda_robot/link/panda_link7/sensor/camera/depth_image/points@sensor_msgs/msg/PointCloud2[ignition.msgs.PointCloudPacked',
             # 4. Camera Info
             '/camera/camera_info@sensor_msgs/msg/CameraInfo[ignition.msgs.CameraInfo'
         ],
         remappings=[
             #('/world/empty/model/panda_robot/joint_state', '/joint_states'),
-            ('/world/empty/model/panda_robot/link/panda_link7/sensor/camera/depth_image/points', '/camera/depth/points'),
+            #('/world/empty/model/panda_robot/link/panda_link7/sensor/camera/depth_image/points', '/camera/depth/points'),
+            ('/world/obstacle_world/model/panda_robot/link/panda_link7/sensor/camera/depth_image/points', '/camera/depth/points'),
         ],
         output='screen'
     )
