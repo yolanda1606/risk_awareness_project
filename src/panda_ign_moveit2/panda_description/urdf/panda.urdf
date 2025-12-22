@@ -555,7 +555,7 @@
   </gazebo>
   <gazebo reference="panda_hand">
     <sensor name="camera" type="depth">
-      <pose>0.04 0 0.04 -1.5707 0 -1.5707</pose>
+      <pose>0.04 0 0.04 0 1.5707 0</pose>
       <visualize>true</visualize>
       <update_rate>30</update_rate>
       <camera>

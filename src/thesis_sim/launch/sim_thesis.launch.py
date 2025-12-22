@@ -42,7 +42,7 @@ def generate_launch_description():
     #    cmd=['ign', 'gazebo', '-r', 'empty.sdf'],
     #   output='screen'
     
-    cmd=['ign', 'gazebo', '-r', '/home/josa/thesis/src/panda_ign_moveit2/scenarios/obstacles.sdf'],
+    cmd=['ign', 'gazebo', '-r', '/home/josa/thesis/src/panda_ign_moveit2/scenarios/lab_world.sdf'],
     output='screen'
 )
 
@@ -64,14 +64,13 @@ def generate_launch_description():
             #'/world/empty/model/panda_robot/joint_state@sensor_msgs/msg/JointState[ignition.msgs.Model',
             # 3. Point Cloud (With Explicit Types)
             #'/world/empty/model/panda_robot/link/panda_link7/sensor/camera/depth_image/points@sensor_msgs/msg/PointCloud2[ignition.msgs.PointCloudPacked',
-            '/world/obstacle_world/model/panda_robot/link/panda_link7/sensor/camera/depth_image/points@sensor_msgs/msg/PointCloud2[ignition.msgs.PointCloudPacked',
-            # 4. Camera Info
+            '/world/obstacle_world/model/panda_robot/link/panda_hand/sensor/camera/depth_image/points@sensor_msgs/msg/PointCloud2[ignition.msgs.PointCloudPacked',            # 4. Camera Info
             '/camera/camera_info@sensor_msgs/msg/CameraInfo[ignition.msgs.CameraInfo'
         ],
         remappings=[
             #('/world/empty/model/panda_robot/joint_state', '/joint_states'),
             #('/world/empty/model/panda_robot/link/panda_link7/sensor/camera/depth_image/points', '/camera/depth/points'),
-            ('/world/obstacle_world/model/panda_robot/link/panda_link7/sensor/camera/depth_image/points', '/camera/depth/points'),
+            ('/world/obstacle_world/model/panda_robot/link/panda_hand/sensor/camera/depth_image/points', '/camera/depth/points'),
         ],
         output='screen'
     )
@@ -81,15 +80,13 @@ def generate_launch_description():
         package='tf2_ros',
         executable='static_transform_publisher',
         name='static_transform_publisher',
-        arguments=['0', '0', '0', '0', '0', '0', 'panda_hand', 'panda_robot/panda_link7/camera']
+        arguments=['0.04', '0', '0.04', '0', '-1.5707', '0', 'panda_hand', 'panda_robot/panda_hand/camera']
     )
-
     # 1. Create the spawner node for joint_state_broadcaster
     joint_state_broadcaster_spawner = Node(
         package='controller_manager',
         executable='spawner',
-        arguments=['joint_state_broadcaster', '--controller-manager', '/controller_manager'],
-        output='screen'
+        arguments=['joint_trajectory_controller', '--controller-manager', '/controller_manager', '--controller-manager-timeout', '60'],        output='screen'
     )
 
 
@@ -97,7 +94,7 @@ def generate_launch_description():
     arm_controller_spawner = Node(
          package='controller_manager',
          executable='spawner',
-         arguments=['joint_trajectory_controller', '--controller-manager', '/controller_manager'],
+         arguments=['joint_state_broadcaster', '--controller-manager', '/controller_manager', '--controller-manager-timeout', '60'],    
          output='screen'
     )
 
