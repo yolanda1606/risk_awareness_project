@@ -49,7 +49,8 @@ def generate_launch_description():
     spawn_entity = Node(
         package='ros_gz_sim',
         executable='create',
-        arguments=['-topic', 'robot_description', '-name', 'panda_robot', '-z', '0.0', '-allow_renaming', 'true'],
+        arguments=['-topic', 'robot_description', '-name', 'panda_robot', '-z', '0.0', '-allow_renaming', 'true'
+        ],
         output='screen'
     )
 
@@ -80,7 +81,11 @@ def generate_launch_description():
         package='tf2_ros',
         executable='static_transform_publisher',
         name='static_transform_publisher',
-        arguments=['0.04', '0', '0.04', '0', '-1.5707', '0', 'panda_hand', 'panda_robot/panda_hand/camera']
+        arguments=[
+            "--x", "0.04", "--y", "0", "--z", "0.04",
+            "--qx", "0", "--qy", "-0.707", "--qz", "0", "--qw", "0.707",
+            "--frame-id", "panda_hand", "--child-frame-id", "panda_robot/panda_hand/camera"
+        ]
     )
     # 1. Create the spawner node for joint_state_broadcaster
     joint_state_broadcaster_spawner = Node(

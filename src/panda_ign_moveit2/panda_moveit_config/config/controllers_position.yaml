@@ -1,6 +1,6 @@
 controller_manager:
   ros__parameters:
-    update_rate: 250
+    update_rate: 333
 
     joint_state_broadcaster:
       type: joint_state_broadcaster/JointStateBroadcaster
@@ -21,6 +21,7 @@ joint_trajectory_controller:
       - panda_joint5
       - panda_joint6
       - panda_joint7
+    allow_nonzero_velocity_at_trajectory_end: false
     command_interfaces:
       - position
     state_interfaces:

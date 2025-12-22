@@ -3,9 +3,9 @@ initial_joint_positions:
     joint1: 0.0
     joint2: 0.0      # Was -0.785. Set to 0.0 to stand upright.
     joint3: 0.0
-    joint4: -1.57    # CRITICAL: Must be NEGATIVE. Was 1.57 (invalid).
+    joint4: -1.57    
     joint5: 0.0
-    joint6: 1.57     # Keeps the gripper pointing forward relative to the arm.
+    joint6: 1.57     
     joint7: 0.785
   panda_gripper:
     joint1: 0.0
