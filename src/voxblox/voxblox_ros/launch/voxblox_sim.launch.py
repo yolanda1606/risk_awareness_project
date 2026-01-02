@@ -40,8 +40,8 @@ def generate_launch_description():
             # 4. PUBLISHING
             'publish_esdf_map': True,      # We NEED this
             'publish_pointclouds': True,   # Useful for debug
-            'publish_slices': False,       # DISABLE to save CPU
-            'slice_level': 0.7,
+            'publish_slices': True,       # DISABLE to save CPU
+            'slice_level': 0.6,
         }],
         remappings=[
             ('pointcloud', '/camera/depth/points'), 

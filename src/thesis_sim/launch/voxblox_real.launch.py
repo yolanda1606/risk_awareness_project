@@ -74,7 +74,7 @@ def generate_launch_description():
             'publish_esdf_map': True,
             'publish_pointclouds': True,
             'publish_slices': True,
-            'slice_level': 0.9,
+            'slice_level': 0.9  ,
         }],
         remappings=[
             # Remap Voxblox input to RealSense output
