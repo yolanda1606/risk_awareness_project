@@ -7,7 +7,7 @@ def generate_launch_description():
     
     voxel_size_arg = DeclareLaunchArgument(
         'voxel_size', 
-        default_value = "0.05", # Adjusted from 0.02 to 0.05
+        default_value = "0.03", # Adjusted from 0.02 to 0.05
         description='Voxblox voxel size'
     )
 
@@ -19,7 +19,7 @@ def generate_launch_description():
         parameters=[{
             # 1. FRAMES
             'world_frame': 'world',
-            'truncation_distance': 0.1,
+            #'truncation_distance': 0.1,
             'sensor_frame': '', # <--- Leave EMPTY for multi-camera setups
             'allow_clear': True,  # Ensures the static camera can delete the "ghosts" created by the moving arm
             'use_tf_transforms': True,
@@ -30,7 +30,7 @@ def generate_launch_description():
             'tsdf_voxels_per_side': 16,
             'voxel_carving_enabled': True,
             'color_mode': 'normals',
-            'method': 'fast', # 'fast' is good for laptops
+            'method': 'merged', # 'fast' is good for laptops /better CPU usage. 'merged' optimal or 'simple' more accurate but need more CPU
             'verbose': True,
             
             # 3. PERFORMANCE OPTIMIZATION (Laptop Friendly)

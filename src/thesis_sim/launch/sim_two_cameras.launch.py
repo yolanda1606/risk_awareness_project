@@ -93,16 +93,15 @@ def generate_launch_description():
         ]
     )
 
-    # STATIC CAMERA TF (Precision Alignment)
-    # Position: 1.6m back, 1.2m up.
-    # Orientation: Looking directly at the table center (x=1.15).
+    # STATIC CAMERA TF
+    # Matches the NEW SDF pose: x=2.0, z=1.3, pitch=0.65
     static_tf_static = Node(
         package='tf2_ros',
         executable='static_transform_publisher',
         name='static_tf_static',
         arguments=[
-            "--x", "1.6", "--y", "0", "--z", "1.2",
-            "--roll", "0", "--pitch", "0.6", "--yaw", "3.14159", 
+            "--x", "2.0", "--y", "0", "--z", "1.3",
+            "--roll", "0", "--pitch", "0.65", "--yaw", "3.14159", 
             "--frame-id", "world", 
             "--child-frame-id", "static_camera/link/static_depth_camera"
         ]
