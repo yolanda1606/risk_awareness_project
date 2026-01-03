@@ -93,23 +93,20 @@ def generate_launch_description():
         ]
     )
 
-    # STATIC CAMERA TF
-    # Matches the new SDF pose: x=1.8, z=1.2, pitch=0.4, yaw=3.14
+    # STATIC CAMERA TF (Precision Alignment)
+    # Position: 1.6m back, 1.2m up.
+    # Orientation: Looking directly at the table center (x=1.15).
     static_tf_static = Node(
         package='tf2_ros',
         executable='static_transform_publisher',
         name='static_tf_static',
         arguments=[
-            "--x", "1.8", "--y", "0", "--z", "1.2",
-            # Standard Optical Rotation: Roll=-90deg, Pitch=0, Yaw=-90deg (approx)
-            # plus your specific look-at angle.
-            # Try this Quaternion which is safer than RPY for optical frames:
-            "--qx", "-0.15", "--qy", "0.68", "--qz", "0.68", "--qw", "-0.15",
+            "--x", "1.6", "--y", "0", "--z", "1.2",
+            "--roll", "0", "--pitch", "0.6", "--yaw", "3.14159", 
             "--frame-id", "world", 
             "--child-frame-id", "static_camera/link/static_depth_camera"
         ]
     )
-
     # 1. Create the spawner node for joint_state_broadcaster
     joint_state_broadcaster_spawner = Node(
         package='controller_manager',
