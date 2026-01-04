@@ -7,7 +7,7 @@ def generate_launch_description():
     
     voxel_size_arg = DeclareLaunchArgument(
         'voxel_size', 
-        default_value = "0.03", # Adjusted from 0.02 to 0.05
+        default_value = "0.05", # Adjusted from 0.02 to 0.05
         description='Voxblox voxel size'
     )
 
@@ -30,7 +30,7 @@ def generate_launch_description():
             'tsdf_voxels_per_side': 16,
             'voxel_carving_enabled': True,
             'color_mode': 'normals',
-            'method': 'merged', # 'fast' is good for laptops /better CPU usage. 'merged' optimal or 'simple' more accurate but need more CPU
+            'method': 'simple', # 'fast' is good for laptops /better CPU usage. 'merged' optimal or 'simple' more accurate but need more CPU
             'verbose': True,
             
             # 3. PERFORMANCE OPTIMIZATION (Laptop Friendly)
@@ -42,8 +42,14 @@ def generate_launch_description():
             # 4. PUBLISHING
             'publish_esdf_map': True,      # We NEED this
             'publish_pointclouds': True,   # Useful for debug
-            'publish_slices': True,       # DISABLE to save CPU
+            'publish_slices': False,       # DISABLE to save CPU
             'slice_level': 0.75,
+
+
+            # --- HOLE FIXING (Sparsity Compensation) ---
+            #'use_sparsity_compensation_factor': True,
+            #'sparsity_compensation_factor': 10.0, # Strong protection against holes
+            #'enable_anti_grazing': True,          # Prevents rays from cutting corners
         }],
         remappings=[
             # Listen to the fused topic
