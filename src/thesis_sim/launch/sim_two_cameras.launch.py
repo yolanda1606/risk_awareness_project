@@ -41,8 +41,8 @@ def generate_launch_description():
     gazebo = ExecuteProcess(
     #    cmd=['ign', 'gazebo', '-r', 'empty.sdf'],
     #   output='screen'
-    
-    cmd=['ign', 'gazebo', '-r', '/home/josa/thesis/src/panda_ign_moveit2/scenarios/lab_two_cameras.sdf'],
+
+    cmd=['ign', 'gazebo', '-r', '/home/josa/thesis/src/panda_ign_moveit2/scenarios/lab_visibility.sdf'],
     output='screen'
 )
 
