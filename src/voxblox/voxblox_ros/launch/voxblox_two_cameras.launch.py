@@ -33,16 +33,18 @@ def generate_launch_description():
             'method': 'simple', # 'fast' is good for laptops /better CPU usage. 'merged' optimal or 'simple' more accurate but need more CPU
             'verbose': True,
             
-            # 3. PERFORMANCE OPTIMIZATION (Laptop Friendly)
-            'update_mesh_every_n_sec': 1.0,   # Slow down visual updates (was 0.1)
-            'update_esdf_every_n_sec': 0.1, # Slow down map updates (was 0.1)
-            'min_time_between_msgs_sec': 0.2, # Process max 5 frames per second
-            'max_ray_length_m': 2.5,          # Don't map things too far away
+            # 3. PERFORMANCE OPTIMIZATION (CRITICAL FIXES HERE)
+            'update_mesh_every_n_sec': 0.5,    # <--- CHANGE 5.0 to 0.5 (Fast feedback)
+            'update_esdf_every_n_sec': 0.5,    # <--- Match the mesh rate
+            'publish_map_every_n_sec': 0.5,    # <--- Ensure map is sent frequently
+            'min_time_between_msgs_sec': 0.0,  # <--- Let all data through for now
+            'max_ray_length_m': 2.5,
 
             # 4. PUBLISHING
-            'publish_esdf_map': True,      # We NEED this
-            'publish_pointclouds': True,   # Useful for debug
-            'publish_slices': False,       # DISABLE to save CPU
+            'publish_tsdf_map': True,
+            'publish_esdf_map': True,
+            'publish_pointclouds': True,
+            'publish_slices': False,
             'slice_level': 0.75,
 
 
@@ -52,9 +54,15 @@ def generate_launch_description():
             'enable_anti_grazing': True,          # Prevents rays from cutting corners
         }],
         remappings=[
-            # Listen to the fused topic
+            # 1. Input Data
             ('pointcloud', '/camera/combined_points'), 
-            ('voxblox_node/esdf_map_out', '/esdf_map')
+            
+            # 2. ESDF Output
+            ('voxblox_node/esdf_map_out', '/esdf_map'),
+
+            # 3. TSDF Output (THIS WAS MISSING)
+            # Without this, the inspector node hears silence.
+            ('tsdf_map_out', '/tsdf_map_out') 
         ]
     )
 

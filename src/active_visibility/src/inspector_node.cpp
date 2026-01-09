@@ -8,19 +8,22 @@
 class UncertaintyInspector : public rclcpp::Node {
 public:
   UncertaintyInspector() : Node("uncertainty_inspector") {
-    // 1. Subscribe to the raw Voxblox Layer
-    tsdf_sub_ = this->create_subscription<voxblox_msgs::msg::Layer>(
-        "/tsdf_map_out", 1, std::bind(&UncertaintyInspector::tsdfCallback, this, std::placeholders::_1));
+    // 1. Define QoS to match Voxblox (Reliable + Volatile)
+    rclcpp::QoS map_qos(1);
+    map_qos.reliable();
+    map_qos.durability_volatile(); 
 
-    // 2. Publisher for the "Purple Cloud" (Visual Debugging)
+    // 2. Subscribe using this QoS
+    tsdf_sub_ = this->create_subscription<voxblox_msgs::msg::Layer>(
+        "/tsdf_map_out", map_qos, std::bind(&UncertaintyInspector::tsdfCallback, this, std::placeholders::_1));
+
+    // 3. Publishers
     marker_pub_ = this->create_publisher<visualization_msgs::msg::Marker>("/uncertainty_cloud", 1);
-    
-    // 3. Publisher for the Score (For MPC later)
     score_pub_ = this->create_publisher<std_msgs::msg::Float32>("/visibility_score", 1);
 
-    // TARGET: The Hidden Red Box Position (from your SDF file)
+    // TARGET
     roi_center_ = voxblox::Point(1.15, 0.0, 0.75); 
-    roi_size_ = 0.3; // Check a 30cm box around it
+    roi_size_ = 0.3; 
   }
 
   void tsdfCallback(const voxblox_msgs::msg::Layer::SharedPtr layer_msg) {

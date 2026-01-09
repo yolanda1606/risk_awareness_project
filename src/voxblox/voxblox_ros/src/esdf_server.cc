@@ -65,6 +65,15 @@ void EsdfServer::setupRos() {
         rclcpp::Duration::from_seconds(update_esdf_every_n_sec),
         std::bind(&EsdfServer::updateEsdfEvent, this));
   }
+
+
+  // --- FIX START: Read the parameter safely ---
+  // We use get_parameter because the parent class (TsdfServer) already declared it.
+  publish_esdf_map_ = true;
+  if (!node_->get_parameter("publish_esdf_map", publish_esdf_map_)) {
+    RCLCPP_WARN(node_->get_logger(), "Could not get param 'publish_esdf_map', defaulting to true");
+  }
+  // --- FIX END ---
 }
 
 void EsdfServer::publishAllUpdatedEsdfVoxels() {
@@ -141,33 +150,32 @@ void EsdfServer::publishTraversable() {
 }
 
 void EsdfServer::publishMap(bool reset_remote_map) {
-  if (!publish_esdf_map_) {
-    return;
+  // 1. REMOVED THE BLOCKING CHECK: if (!publish_esdf_map_) return;
+
+  // 2. Publish ESDF if enabled
+  if (publish_esdf_map_) {
+    // Force subscribers to 1 to bypass the "Lazy Publisher" check
+    int subscribers = 1; 
+    if (subscribers > 0) {
+      if (num_subscribers_esdf_map_ < subscribers) {
+        reset_remote_map = true;
+      }
+      const bool only_updated = !reset_remote_map;
+      timing::Timer publish_map_timer("map/publish_esdf");
+      voxblox_msgs::msg::Layer layer_msg;
+
+      serializeLayerAsMsg<EsdfVoxel>(esdf_map_->getEsdfLayer(),
+                                     only_updated, &layer_msg);
+      if (reset_remote_map) {
+        layer_msg.action = static_cast<uint8_t>(MapDerializationAction::kReset);
+      }
+      esdf_map_pub_->publish(layer_msg);
+      publish_map_timer.Stop();
+    }
+    num_subscribers_esdf_map_ = subscribers;
   }
 
-  // CORRECTED LINE: Using esdf_map_pub_ directly (member variable), not node_->...
-  int subscribers = esdf_map_pub_->get_subscription_count();
-  if (subscribers > 0) {
-    if (num_subscribers_esdf_map_ < subscribers) {
-      // Always reset the remote map and send all when a new subscriber
-      // subscribes. A bit of overhead for other subscribers, but better than
-      // inconsistent map states.
-      reset_remote_map = true;
-    }
-    const bool only_updated = !reset_remote_map;
-    timing::Timer publish_map_timer("map/publish_esdf");
-    voxblox_msgs::msg::Layer layer_msg;
-    // CORRECTED LINE: Using esdf_map_ directly (member variable)
-    serializeLayerAsMsg<EsdfVoxel>(esdf_map_->getEsdfLayer(),
-                                   only_updated, &layer_msg);
-    if (reset_remote_map) {
-      layer_msg.action = static_cast<uint8_t>(MapDerializationAction::kReset);
-    }
-    // CORRECTED LINE: Using esdf_map_pub_ directly
-    esdf_map_pub_->publish(layer_msg);
-    publish_map_timer.Stop();
-  }
-  num_subscribers_esdf_map_ = subscribers;
+  // 3. CRITICAL: Always call parent to publish TSDF map for the Inspector
   TsdfServer::publishMap();
 }
 
