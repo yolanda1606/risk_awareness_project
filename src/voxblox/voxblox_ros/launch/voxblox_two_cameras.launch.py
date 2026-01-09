@@ -34,9 +34,9 @@ def generate_launch_description():
             'verbose': True,
             
             # 3. PERFORMANCE OPTIMIZATION (Laptop Friendly)
-            'update_mesh_every_n_sec': 10.0,   # Slow down visual updates (was 0.1)
+            'update_mesh_every_n_sec': 1.0,   # Slow down visual updates (was 0.1)
             'update_esdf_every_n_sec': 0.1, # Slow down map updates (was 0.1)
-            'min_time_between_msgs_sec': 0.4, # Process max 5 frames per second
+            'min_time_between_msgs_sec': 0.2, # Process max 5 frames per second
             'max_ray_length_m': 2.5,          # Don't map things too far away
 
             # 4. PUBLISHING
@@ -47,9 +47,9 @@ def generate_launch_description():
 
 
             # --- HOLE FIXING (Sparsity Compensation) ---
-            #'use_sparsity_compensation_factor': True,
-            #'sparsity_compensation_factor': 10.0, # Strong protection against holes
-            #'enable_anti_grazing': True,          # Prevents rays from cutting corners
+            'use_sparsity_compensation_factor': True,
+            'sparsity_compensation_factor': 5.0, # Strong protection against holes
+            'enable_anti_grazing': True,          # Prevents rays from cutting corners
         }],
         remappings=[
             # Listen to the fused topic

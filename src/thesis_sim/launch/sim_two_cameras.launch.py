@@ -12,6 +12,7 @@ def generate_launch_description():
     pkg_panda = get_package_share_directory('panda_description')
     xacro_file = os.path.join(pkg_panda, 'urdf', 'panda.urdf.xacro')
     gz_resource_path = os.path.dirname(pkg_panda)
+    world_path = '/home/dummy/Projects/joel/src/panda_ign_moveit2/scenarios/lab_visibility.sdf'
 
     # 2. ENVIRONMENT VARIABLES
     set_gz_resource_path = AppendEnvironmentVariable(
@@ -39,12 +40,9 @@ def generate_launch_description():
     )
 
     gazebo = ExecuteProcess(
-    #    cmd=['ign', 'gazebo', '-r', 'empty.sdf'],
-    #   output='screen'
-
-    cmd=['ign', 'gazebo', '-r', '/home/josa/thesis/src/panda_ign_moveit2/scenarios/lab_visibility.sdf'],
-    output='screen'
-)
+        cmd=['ign', 'gazebo', '-r', world_path],
+        output='screen'
+    )
 
     spawn_entity = Node(
         package='ros_gz_sim',
