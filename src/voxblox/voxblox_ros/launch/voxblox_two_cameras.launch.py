@@ -7,7 +7,7 @@ def generate_launch_description():
     
     voxel_size_arg = DeclareLaunchArgument(
         'voxel_size', 
-        default_value = "0.05", # Adjusted from 0.02 to 0.05
+        default_value = "0.02", # Adjusted from 0.02 to 0.05
         description='Voxblox voxel size'
     )
 
@@ -19,7 +19,7 @@ def generate_launch_description():
         parameters=[{
             # 1. FRAMES
             'world_frame': 'world',
-            #'truncation_distance': 0.1,
+            'truncation_distance': 0.08,
             'sensor_frame': '', # <--- Leave EMPTY for multi-camera setups
             'allow_clear': True,  # Ensures the static camera can delete the "ghosts" created by the moving arm
             'use_tf_transforms': True,
@@ -30,13 +30,15 @@ def generate_launch_description():
             'tsdf_voxels_per_side': 16,
             'voxel_carving_enabled': True,
             'color_mode': 'normals',
-            'method': 'simple', # 'fast' is good for laptops /better CPU usage. 'merged' optimal or 'simple' more accurate but need more CPU
+            'method': 'merged', # 'fast' is good for laptops /better CPU usage. 'merged' optimal or 'simple' more accurate but need more CPU
             'verbose': True,
             
             # 3. PERFORMANCE OPTIMIZATION (CRITICAL FIXES HERE)
-            'update_mesh_every_n_sec': 0.5,    # <--- CHANGE 5.0 to 0.5 (Fast feedback)
-            'update_esdf_every_n_sec': 0.5,    # <--- Match the mesh rate
-            'publish_map_every_n_sec': 0.5,    # <--- Ensure map is sent frequently
+            'integrator_threads': 16,          # CRITICAL: Use your CPU cores (e.g., 8, 12, 16)
+            'mesh_integrator_threads': 16,     # CRITICAL: Fast mesh generation for Rviz
+            'update_mesh_every_n_sec': 0.2,    # 5Hz Visuals (Butter smooth)
+            'update_esdf_every_n_sec': 0.1,    # 10Hz Collision Map (Instant reaction)
+            'publish_map_every_n_sec': 0.2,    # 5Hz Updates for your Inspector Node
             'min_time_between_msgs_sec': 0.0,  # <--- Let all data through for now
             'max_ray_length_m': 2.5,
 
@@ -50,8 +52,10 @@ def generate_launch_description():
 
             # --- HOLE FIXING (Sparsity Compensation) ---
             'use_sparsity_compensation_factor': True,
-            'sparsity_compensation_factor': 5.0, # Strong protection against holes
+            'sparsity_compensation_factor': 2.0, # Strong protection against holes
             'enable_anti_grazing': True,          # Prevents rays from cutting corners
+            'use_weight_dropoff': True,          # Better surface convergence near walls
+            'weight_dropoff_epsilon': 0.02
         }],
         remappings=[
             # 1. Input Data
