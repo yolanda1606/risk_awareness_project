@@ -4,14 +4,31 @@ from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, ExecuteProcess, AppendEnvironmentVariable
 from launch.substitutions import Command, LaunchConfiguration
 from launch_ros.actions import Node
-
+import pathlib
 
 def generate_launch_description():
     
     # 1. SETUP: Define paths
+    
+    
+    pkg_thesis_sim = get_package_share_directory('thesis_sim')
+    
+    # B. Restore "pkg_panda" (You deleted this, but xacro needs it!)
     pkg_panda = get_package_share_directory('panda_description')
     xacro_file = os.path.join(pkg_panda, 'urdf', 'panda.urdf.xacro')
     gz_resource_path = os.path.dirname(pkg_panda)
+
+    # C. DYNAMIC PATH CALCULATION
+  
+    workspace_root = pathlib.Path(pkg_thesis_sim).parents[3]
+    
+    # Construct path to the source folder
+    world_path = str(workspace_root / 'src' / 'panda_ign_moveit2' / 'scenarios' / 'lab_visibility.sdf')
+
+    # D. Safety Fallback (If the dynamic logic fails on your specific machine layout)
+    if not os.path.exists(world_path):
+        print(f"[WARN] Computed path {world_path} does not exist. Using fallback.")
+        world_path = '/home/dummy/Projects/joel/src/panda_ign_moveit2/scenarios/lab_visibility.sdf'
 
     # 2. ENVIRONMENT VARIABLES
     set_gz_resource_path = AppendEnvironmentVariable(
@@ -39,12 +56,9 @@ def generate_launch_description():
     )
 
     gazebo = ExecuteProcess(
-    #    cmd=['ign', 'gazebo', '-r', 'empty.sdf'],
-    #   output='screen'
-    
-    cmd=['ign', 'gazebo', '-r', '/home/josa/thesis/src/panda_ign_moveit2/scenarios/lab_two_cameras.sdf'],
-    output='screen'
-)
+        cmd=['ign', 'gazebo', '-r', world_path],
+        output='screen'
+    )
 
     spawn_entity = Node(
         package='ros_gz_sim',
