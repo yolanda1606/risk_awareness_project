@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="white_panda">
+
+  <xacro:arg name="arm_id" default="panda"/>
+
+  <xacro:include filename="$(find panda_description)/urdf/panda.urdf.xacro"/>
+
+  <xacro:macro name="paint_link_white" params="link_name">
+    <gazebo reference="${link_name}">
+      <visual>
+        <material>
+          <ambient>1.0 1.0 1.0 1.0</ambient>
+          <diffuse>1.0 1.0 1.0 1.0</diffuse>
+          <specular>0.2 0.2 0.2 1.0</specular>
+        </material>
+      </visual>
+    </gazebo>
+  </xacro:macro>
+
+  <xacro:paint_link_white link_name="$(arg arm_id)_link0"/>
+  <xacro:paint_link_white link_name="$(arg arm_id)_link1"/>
+  <xacro:paint_link_white link_name="$(arg arm_id)_link2"/>
+  <xacro:paint_link_white link_name="$(arg arm_id)_link3"/>
+  <xacro:paint_link_white link_name="$(arg arm_id)_link4"/>
+  <xacro:paint_link_white link_name="$(arg arm_id)_link5"/>
+  <xacro:paint_link_white link_name="$(arg arm_id)_link6"/>
+  <xacro:paint_link_white link_name="$(arg arm_id)_link7"/>
+  <xacro:paint_link_white link_name="$(arg arm_id)_hand"/>
+  <xacro:paint_link_white link_name="$(arg arm_id)_leftfinger"/>
+  <xacro:paint_link_white link_name="$(arg arm_id)_rightfinger"/>
+
+</robot>
