@@ -90,7 +90,7 @@ class SemanticCloudProcessor(Node):
             # --- CREATE SEMANTIC MAP ---
             semantic_map = np.zeros(mask_red.shape, dtype=np.uint8)
             semantic_map[mask_red > 0] = 100   # Class ID 100
-            semantic_map[mask_green > 0] = 1 # Class ID 200
+            semantic_map[mask_green > 0] = 200 # Class ID 200
 
             # Cleanup noise
             kernel = np.ones((5,5), np.uint8)
