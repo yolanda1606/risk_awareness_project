@@ -20,7 +20,7 @@ def generate_launch_description():
                 </inertial>
                 <visual name='visual'>
                     <geometry><box><size>0.2 0.2 0.2</size></box></geometry>
-                    <material><ambient>1 0 0 1</ambient><diffuse>1 0 0 1</diffuse></material>
+                    <material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material>
                 </visual>
                 <collision name='collision'>
                     <geometry><box><size>0.2 0.2 0.2</size></box></geometry>

@@ -41,7 +41,7 @@ class POccMapperStage3(Node):
         # Voxel Size: 0.10 is the sweet spot (Safe against "Swiss Cheese", precise enough for MPC)
         self.declare_parameter('voxel_size', 0.10)       
         self.declare_parameter('max_range', 4.0)
-        self.declare_parameter('pub_thresh', 0.0) # Only show solid objects
+        self.declare_parameter('pub_thresh', -0.1) # Only show solid objects
 
         # ---- Constants ----
         self.vs = self.get_parameter('voxel_size').value
@@ -73,23 +73,12 @@ class POccMapperStage3(Node):
         self.get_logger().info(f"Stage 3 Mapper (Semantic) Started. VS={self.vs}m")
 
     def cloud_cb(self, msg: PointCloud2):
-        """
-        Main Pipeline:
-        1. Read Points & Semantics
-        2. Transform to World
-        3. Raycast
-        4. Apply Semantic Update Formula
-        """
-        # 1. Get Transform (Camera -> World)
         try:
             trans = self.tf_buffer.lookup_transform(
-                self.target_frame,
-                msg.header.frame_id,
-                Time())
+                self.target_frame, msg.header.frame_id, Time())
         except TransformException as ex:
-            return # Wait for TF
+            return 
 
-        # Extract Translation (T) and Rotation (R)
         tx = trans.transform.translation.x
         ty = trans.transform.translation.y
         tz = trans.transform.translation.z
@@ -99,25 +88,16 @@ class POccMapperStage3(Node):
         qz = trans.transform.rotation.z
         qw = trans.transform.rotation.w
         
-        # Camera Position (Origin of Rays)
         cam_x, cam_y, cam_z = tx, ty, tz
 
-        # 2. Process Point Cloud (Read 'intensity' field)
-        # Using Step=50 (Downsampling) to keep it real-time
-        # We assume fields are x,y,z,intensity.
         gen = pc2.read_points(msg, field_names=("x", "y", "z", "intensity"), skip_nans=True)
         
-        # We collect updates in a dict to handle overlaps in this single frame
-        # Structure: { voxel_idx: (g_factor, z_meas) }
         hit_updates = {}
         miss_updates = set()
 
-        # Iterate (Downsampled)
-        for i, point in enumerate(itertools.islice(gen, 0, None, 50)):
-            # Unpack
+        for i, point in enumerate(itertools.islice(gen, 0, None, 10)):
             lx, ly, lz, intensity = point 
 
-            # Manual Rotation/Translation (Faster than PyKDL)
             rx = (1 - 2*qy*qy - 2*qz*qz)*lx + (2*qx*qy - 2*qz*qw)*ly + (2*qx*qz + 2*qy*qw)*lz
             ry = (2*qx*qy + 2*qz*qw)*lx + (1 - 2*qx*qx - 2*qz*qz)*ly + (2*qy*qz - 2*qx*qw)*lz
             rz = (2*qx*qz - 2*qy*qw)*lx + (2*qy*qz + 2*qx*qw)*ly + (1 - 2*qx*qx - 2*qy*qy)*lz
@@ -126,79 +106,86 @@ class POccMapperStage3(Node):
             wy = ry + ty
             wz = rz + tz
 
-            # --- FILTERING ---
-            # 1. Floor Filter (Crucial for Ghosts)
-            if wz < 0.05: 
-                continue 
-            
-            # 2. Max Range
             dist = math.sqrt((wx-cam_x)**2 + (wy-cam_y)**2 + (wz-cam_z)**2)
+            
+            is_hit = True
+            
+            # --- THE GHOST FIX: THE FLOOR ---
+            # If the ray hits the floor, DO NOT draw a solid block.
+            # But DO NOT 'continue' either! We need this ray to clear the ghosts above it!
+            if wz < 0.05: 
+                is_hit = False
+            
             if dist > self.max_range:
+                dist = self.max_range
+                is_hit = False
+                
+            if dist < 0.20:
                 continue
 
-            # --- SEMANTIC LOGIC (The Supervisor's Formula) ---
             class_id = int(intensity)
-            
-            if class_id == 100:     # DYNAMIC (Red Robot)
-                g_factor = 0.1      # Low Memory -> Fast Update
-            elif class_id == 200:   # STATIC (Green Table)
-                g_factor = 0.9      # High Memory -> Stable
-            else:
-                g_factor = 0.5      # Unknown
+            if class_id == 100:     # DYNAMIC
+                g_factor = 0.1      
+            elif class_id == 200:   # STATIC
+                g_factor = 0.9      
+            else:                   # UNKNOWN 
+                g_factor = 0.5      
 
-            # --- RAYCASTING ---
             hit_idx = voxel_index(wx, wy, wz, self.vs)
             
-            # Register HIT
-            # If multiple rays hit the same voxel, keep the most "Dynamic" one (lowest g)
-            if hit_idx in hit_updates:
-                current_g, _ = hit_updates[hit_idx]
-                if g_factor < current_g:
+            if is_hit:
+                if hit_idx in hit_updates:
+                    current_g, _ = hit_updates[hit_idx]
+                    if g_factor < current_g:
+                        hit_updates[hit_idx] = (g_factor, 1.0)
+                else:
                     hit_updates[hit_idx] = (g_factor, 1.0)
-            else:
-                hit_updates[hit_idx] = (g_factor, 1.0)
 
-            # Register MISSES (Ray Tracing)
             steps = int(dist / self.vs)
             if steps > 1:
-                # Walk from Camera to Hit
                 for s in range(1, steps): 
                     ratio = s / steps
+                    
+                    if (ratio * dist) < 0.20:
+                        continue
+                        
                     mx = cam_x + (wx - cam_x) * ratio
                     my = cam_y + (wy - cam_y) * ratio
                     mz = cam_z + (wz - cam_z) * ratio
                     
-                    # Floor check for misses too
+                    # Ignore underground misses
                     if mz < 0.05: continue
                     
                     midx = voxel_index(mx, my, mz, self.vs)
-                    if midx != hit_idx:
+                    
+                    if midx != hit_idx or not is_hit:
                         miss_updates.add(midx)
 
-        # --- APPLY UPDATES ---
-        
         # 1. Process MISSES first (Clearing)
-        # Formula: L_new = g * L_old
-        g_miss = 0.4 
         for idx in miss_updates:
             if idx in hit_updates:
                 continue
                 
-            l_old = self.map.get(idx, 0.5)
-            l_new = g_miss * l_old 
-            
-            # Pruning to save memory
-            if l_new < 0.01:
-                if idx in self.map: del self.map[idx]
-            else:
-                self.map[idx] = l_new
+            if idx in self.map:
+                l_old = self.map[idx]['p']
+                voxel_g = self.map[idx]['g'] 
+                
+                l_new = voxel_g * l_old 
+                
+                if l_new < 0.01:
+                    del self.map[idx]
+                else:
+                    self.map[idx]['p'] = l_new
 
         # 2. Process HITS (Occupancy)
-        # Formula: L_new = g * L_old + (1-g) * 1.0
         for idx, (g, z_meas) in hit_updates.items():
-            l_old = self.map.get(idx, 0.5)
+            if idx in self.map:
+                l_old = self.map[idx]['p']
+            else:
+                l_old = 0.5
+                
             l_new = (g * l_old) + ((1.0 - g) * z_meas)
-            self.map[idx] = clamp01(l_new)
+            self.map[idx] = {'p': clamp01(l_new), 'g': g}
 
     def publish_map(self):
         if not self.map:
@@ -206,7 +193,10 @@ class POccMapperStage3(Node):
 
         # Prepare Cloud
         pts = []
-        for (ix, iy, iz), p in self.map.items():
+        for (ix, iy, iz), voxel_data in self.map.items():
+            # EXTRACT the probability from the dictionary
+            p = voxel_data['p'] 
+            
             if p > self.pub_thresh:
                 # Calculate center
                 x = (ix + 0.5) * self.vs

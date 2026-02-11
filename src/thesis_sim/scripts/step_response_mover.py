@@ -24,12 +24,12 @@ class StepResponseMover(Node):
         
         # POSITIONS
         # Position A: The "Test Zone" (In front of robot)
-        self.pos_A_str = "0.5 0.0 0.3"
-        self.pos_A_list = [0.5, 0.0, 0.3]
+        self.pos_A_str = "0.5 -0.25 0.3"
+        self.pos_A_list = [0.5, -0.25, 0.3]
         
         # Position B: The "Void" (Far away to clear the map)
         self.pos_B_str = "0.5 0.25 0.3" 
-        self.pos_B_list = [0.5, 0.5, 0.3]
+        self.pos_B_list = [0.5, 0.25, 0.3]
         
         self.state = "AT_A" # Start at A
         self.timer = self.create_timer(self.interval, self.cycle_step)

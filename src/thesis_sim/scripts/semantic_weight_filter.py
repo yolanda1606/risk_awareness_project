@@ -29,7 +29,7 @@ class SemanticAwarePointCloud(Node):
         self.create_subscription(
             CameraInfo, '/camera/camera_info', self.info_callback, qos_profile_sensor_data)
         
-        self.pub_cloud = self.create_publisher(PointCloud2, '/semantic_pcl', 10)
+        # self.pub_cloud = self.create_publisher(PointCloud2, '/semantic_pcl', 10)
         self.get_logger().info("Semantic Point Cloud Node Started. Waiting for data...")
 
     def info_callback(self, msg):

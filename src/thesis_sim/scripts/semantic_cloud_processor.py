@@ -137,7 +137,7 @@ class SemanticCloudProcessor(Node):
             # 100 = Dynamic (Red) -> High Weight/Intensity
             weights[semantic_values == 100] = 100.0 
             # 200 = Static (Green) -> Medium Weight/Intensity
-            weights[semantic_values == 200] = 1.0   
+            weights[semantic_values == 200] = 200.0 
 
             # =========================================
             # PART E: PUBLISH CLOUD

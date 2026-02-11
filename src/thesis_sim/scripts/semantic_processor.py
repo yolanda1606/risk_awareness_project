@@ -18,7 +18,7 @@ class SemanticProcessor(Node):
 
         # 2. Publisher
         # This publishes a single image where pixel value = Class ID
-        self.pub_mask = self.create_publisher(Image, '/camera/semantic_mask', 10)
+        # self.pub_mask = self.create_publisher(Image, '/camera/semantic_mask', 10)
         
         self.bridge = CvBridge()
         self.get_logger().info("Semantic Processor Active: Classifying Red (Dynamic) vs Green (Static)...")
