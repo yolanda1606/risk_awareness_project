@@ -27,14 +27,21 @@ endif()
 # Install launch files
 install(DIRECTORY
   launch
+  worlds
   DESTINATION share/${PROJECT_NAME}
 )
 
 # Install model files (You will need this later for your worlds)
-install(DIRECTORY
-  models
-  worlds
-  DESTINATION share/${PROJECT_NAME}
+#install(DIRECTORY
+#  models
+#  worlds
+#  DESTINATION share/${PROJECT_NAME}
+#)
+
+install(PROGRAMS
+  scripts/semantic_cloud_processor.py
+  DESTINATION lib/${PROJECT_NAME}
+  RENAME semantic_node
 )
 
 ament_package()

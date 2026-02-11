@@ -32,42 +32,43 @@
       <pose>1.15 0 0.35 0 0 0</pose> 
       <link name="link">
         <visual name="visual">
-          <geometry><box><size>0.5 0.8 0.7</size></box></geometry>
+          <geometry><box><size>1.0 1.0 0.7</size></box></geometry>
           <material><ambient>0.3 0.3 0.3 1</ambient><diffuse>0.3 0.3 0.3 1</diffuse></material>
         </visual>
-        <collision name="collision"><geometry><box><size>0.5 0.8 0.7</size></box></geometry></collision>
+        <collision name="collision"><geometry><box><size>1.0 1.0 0.7</size></box></geometry></collision>
       </link>
     </model>
 
-    <model name="divider_wall">
+    <model name="front_wall">
       <static>true</static>
-      <pose>1.15 0 0.9 0 0 0</pose> 
+      <pose>0.8 0 0.8 0 0 0</pose> 
       <link name="link">
         <visual name="visual">
-          <geometry><box><size>0.02 0.8 0.4</size></box></geometry>
-          <material><ambient>0 0 0 1</ambient><diffuse>0 0 0 1</diffuse></material>
+          <geometry><box><size>0.02 0.8 0.3</size></box></geometry>
+          <material><ambient>0.1 0.1 0.1 1</ambient><diffuse>0.1 0.1 0.1 1</diffuse></material>
         </visual>
-        <collision name="collision"><geometry><box><size>0.02 0.8 0.4</size></box></geometry></collision>
+        <collision name="collision"><geometry><box><size>0.02 0.8 0.8</size></box></geometry></collision>
       </link>
     </model>
 
-    <model name="shared_sphere">
+    <model name="back_wall">
       <static>true</static>
-      <pose>1.15 -0.25 1.23 0 0 0</pose> <link name="link">
+      <pose>1.5 0 0.8 0 0 0</pose> 
+      <link name="link">
         <visual name="visual">
-          <geometry><sphere><radius>0.15</radius></sphere></geometry>
-          <material><ambient>0 0 1 1</ambient><diffuse>0 0 1 1</diffuse></material>
+          <geometry><box><size>0.02 0.8 0.8</size></box></geometry>
+          <material><ambient>0.1 0.1 0.1 1</ambient><diffuse>0.1 0.1 0.1 1</diffuse></material>
         </visual>
-        <collision name="collision"><geometry><sphere><radius>0.05</radius></sphere></geometry></collision>
+        <collision name="collision"><geometry><box><size>0.02 0.8 0.8</size></box></geometry></collision>
       </link>
     </model>
 
     <model name="hidden_red_box">
       <static>true</static>
-      <pose>1.35 0.2 0.80 0 0 0</pose> 
+      <pose>1.15 0.0 0.85 0 0 0</pose> 
       <link name="link">
         <visual name="visual">
-          <geometry><box><size>0.15 0.2 0.2</size></box></geometry>
+          <geometry><box><size>0.2 0.2 0.2</size></box></geometry>
           <material><ambient>1 0 0 1</ambient><diffuse>1 0 0 1</diffuse></material>
         </visual>
         <collision name="collision"><geometry><box><size>0.1 0.1 0.1</size></box></geometry></collision>

@@ -457,13 +457,20 @@ void TsdfServer::insertFreespacePointcloud(
 }
 
 void TsdfServer::integratePointcloud(const Transformation& T_G_C,
-                                     const Pointcloud& ptcloud_C,
+                                     const Pointcloud& points_C,
                                      const Colors& colors,
                                      const bool is_freespace_pointcloud) {
-  CHECK_EQ(ptcloud_C.size(), colors.size());
-  tsdf_integrator_->integratePointCloud(T_G_C, ptcloud_C, colors,
-                                        is_freespace_pointcloud);
+  // Create dummy semantic weights (1.0 for each point)
+  std::vector<float> default_weights(points_C.size(), 1.0f);
+
+  tsdf_integrator_->integratePointCloud(
+      T_G_C,
+      points_C,
+      colors,
+      default_weights,   // <-- NEW argument
+      is_freespace_pointcloud);
 }
+
 
 void TsdfServer::publishAllUpdatedTsdfVoxels() {
   // Create a pointcloud with distance = intensity.

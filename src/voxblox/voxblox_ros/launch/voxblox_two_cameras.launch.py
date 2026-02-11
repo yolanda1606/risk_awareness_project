@@ -7,7 +7,7 @@ def generate_launch_description():
     
     voxel_size_arg = DeclareLaunchArgument(
         'voxel_size', 
-        default_value = "0.05", # Adjusted from 0.02 to 0.05
+        default_value = "0.1", # Adjusted from 0.02 to 0.1 for performance
         description='Voxblox voxel size'
     )
 
@@ -19,42 +19,58 @@ def generate_launch_description():
         parameters=[{
             # 1. FRAMES
             'world_frame': 'world',
-            #'truncation_distance': 0.1,
+            'truncation_distance': 0.08,
             'sensor_frame': '', # <--- Leave EMPTY for multi-camera setups
-            'allow_clear': True,  # Ensures the static camera can delete the "ghosts" created by the moving arm
+            'allow_clear': True,
+            'use_const_weight': False,  # Ensures the static camera can delete the "ghosts" created by the moving arm
             'use_tf_transforms': True,
             'use_sim_time': True,  # CRITICAL FIX
+            
 
             # 2. MAPPING SETTINGS
             'tsdf_voxel_size': LaunchConfiguration('voxel_size'), 
             'tsdf_voxels_per_side': 16,
             'voxel_carving_enabled': True,
             'color_mode': 'normals',
-            'method': 'simple', # 'fast' is good for laptops /better CPU usage. 'merged' optimal or 'simple' more accurate but need more CPU
+            'method': 'fast', # 'fast' is good for laptops /better CPU usage. 'merged' optimal or 'simple' more accurate but need more CPU
             'verbose': True,
             
-            # 3. PERFORMANCE OPTIMIZATION (Laptop Friendly)
-            'update_mesh_every_n_sec': 10.0,   # Slow down visual updates (was 0.1)
-            'update_esdf_every_n_sec': 0.1, # Slow down map updates (was 0.1)
-            'min_time_between_msgs_sec': 0.4, # Process max 5 frames per second
-            'max_ray_length_m': 2.5,          # Don't map things too far away
+            # 3. PERFORMANCE OPTIMIZATION (CRITICAL FIXES HERE)
+            'integrator_threads': 16,          # CRITICAL: Use your CPU cores (e.g., 8, 12, 16)
+            'mesh_integrator_threads': 8,     # CRITICAL: Fast mesh generation for Rviz
+            'update_mesh_every_n_sec': 1.0,    # 5Hz Visuals (Butter smooth)
+            'update_esdf_every_n_sec': 0.1,    # 10Hz Collision Map (Instant reaction)
+            'publish_map_every_n_sec': 0.2,    # 5Hz Updates for your Inspector Node
+            'min_time_between_msgs_sec': 0.03,  # <--- Let all data through for now
+            'max_ray_length_m': 2.0,
+            'max_weight': 30.0,
 
             # 4. PUBLISHING
-            'publish_esdf_map': True,      # We NEED this
-            'publish_pointclouds': True,   # Useful for debug
-            'publish_slices': False,       # DISABLE to save CPU
+            'publish_tsdf_map': True,
+            'publish_esdf_map': True,
+            'publish_pointclouds': True,
+            'publish_slices': False,
             'slice_level': 0.75,
 
 
             # --- HOLE FIXING (Sparsity Compensation) ---
             #'use_sparsity_compensation_factor': True,
-            #'sparsity_compensation_factor': 10.0, # Strong protection against holes
+            #'max_weight': 100.0,
+            #'sparsity_compensation_factor': 1.0, # Strong protection against holes
             #'enable_anti_grazing': True,          # Prevents rays from cutting corners
+            #'use_weight_dropoff': True,          # Better surface convergence near walls
+            #'weight_dropoff_epsilon': 0.02
         }],
         remappings=[
-            # Listen to the fused topic
+            # 1. Input Data
             ('pointcloud', '/camera/combined_points'), 
-            ('voxblox_node/esdf_map_out', '/esdf_map')
+            
+            # 2. ESDF Output
+            ('voxblox_node/esdf_map_out', '/esdf_map'),
+
+            # 3. TSDF Output (THIS WAS MISSING)
+            # Without this, the inspector node hears silence.
+            ('tsdf_map_out', '/tsdf_map_out') 
         ]
     )
 

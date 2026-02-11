@@ -100,6 +100,7 @@ class TsdfIntegratorBase {
   virtual void integratePointCloud(const Transformation& T_G_C,
                                    const Pointcloud& points_C,
                                    const Colors& colors,
+                                   const std::vector<float>& weights,
                                    const bool freespace_points = false) = 0;
 
   /// Returns a CONST ref of the config.
@@ -221,10 +222,13 @@ class SimpleTsdfIntegrator : public TsdfIntegratorBase {
 
   void integratePointCloud(const Transformation& T_G_C,
                            const Pointcloud& points_C, const Colors& colors,
-                           const bool freespace_points = false);
+                           const std::vector<float>& weights, // <--- Added
+                           const bool freespace_points = false); // Override is key
+                
 
   void integrateFunction(const Transformation& T_G_C,
                          const Pointcloud& points_C, const Colors& colors,
+                         const std::vector<float>& weights, // <--- ADD THIS
                          const bool freespace_points,
                          ThreadSafeIndex* index_getter);
 };
@@ -243,32 +247,23 @@ class MergedTsdfIntegrator : public TsdfIntegratorBase {
 
   void integratePointCloud(const Transformation& T_G_C,
                            const Pointcloud& points_C, const Colors& colors,
+                           const std::vector<float>& weights, // <--- Added
                            const bool freespace_points = false);
 
  protected:
-  void bundleRays(const Transformation& T_G_C, const Pointcloud& points_C,
-                  const bool freespace_points, ThreadSafeIndex* index_getter,
-                  LongIndexHashMapType<AlignedVector<size_t>>::type* voxel_map,
-                  LongIndexHashMapType<AlignedVector<size_t>>::type* clear_map);
-
+  // FIX: Removed 'override' from the end of this line
   void integrateVoxel(
       const Transformation& T_G_C, const Pointcloud& points_C,
-      const Colors& colors, bool enable_anti_grazing, bool clearing_ray,
-      const std::pair<GlobalIndex, AlignedVector<size_t>>& kv,
+      const Colors& colors, 
+      const std::vector<float>& weights,
+      bool enable_anti_grazing, bool clearing_ray,
       const LongIndexHashMapType<AlignedVector<size_t>>::type& voxel_map);
 
-  void integrateVoxels(
+  void bundleRays(
       const Transformation& T_G_C, const Pointcloud& points_C,
-      const Colors& colors, bool enable_anti_grazing, bool clearing_ray,
-      const LongIndexHashMapType<AlignedVector<size_t>>::type& voxel_map,
-      const LongIndexHashMapType<AlignedVector<size_t>>::type& clear_map,
-      size_t thread_idx);
-
-  void integrateRays(
-      const Transformation& T_G_C, const Pointcloud& points_C,
-      const Colors& colors, bool enable_anti_grazing, bool clearing_ray,
-      const LongIndexHashMapType<AlignedVector<size_t>>::type& voxel_map,
-      const LongIndexHashMapType<AlignedVector<size_t>>::type& clear_map);
+      bool freespace_points, ThreadSafeIndex* index_getter,
+      LongIndexHashMapType<AlignedVector<size_t>>::type* voxel_map,
+      LongIndexHashMapType<AlignedVector<size_t>>::type* clear_map);
 };
 
 /**
@@ -292,11 +287,13 @@ class FastTsdfIntegrator : public TsdfIntegratorBase {
 
   void integrateFunction(const Transformation& T_G_C,
                          const Pointcloud& points_C, const Colors& colors,
+                         const std::vector<float>& weights,
                          const bool freespace_points,
                          ThreadSafeIndex* index_getter);
 
   void integratePointCloud(const Transformation& T_G_C,
                            const Pointcloud& points_C, const Colors& colors,
+                           const std::vector<float>& weights, // <--- Added
                            const bool freespace_points = false);
 
  private:

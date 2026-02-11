@@ -53,8 +53,10 @@ class TsdfServer {
       const Transformation& T_G_C, const bool is_freespace_pointcloud);
 
   void integratePointcloud(const Transformation& T_G_C,
-                           const Pointcloud& ptcloud_C, const Colors& colors,
-                           const bool is_freespace_pointcloud = false);
+                         const Pointcloud& points_C,
+                         const Colors& colors,
+                         bool is_freespace_pointcloud);
+
 
   virtual void newPoseCallback(const Transformation& /*new_pose*/) {
     // Do nothing.

@@ -501,15 +501,15 @@
     <link name='panda_link7'>
       <pose relative_to='panda_joint7'>0 0 0 0 0 0</pose>
       <inertial>
-        <pose>0.008875033507903096 0.008740671088339662 0.07976070333019224 0 0 0</pose>
-        <mass>0.66437446475861062</mass>
+        <pose>0.00861567159523929 0.00848523575173859 0.08206760695488112 0 0 0</pose>
+        <mass>0.68437446475861063</mass>
         <inertia>
-          <ixx>0.001715624246641117</ixx>
-          <ixy>-0.00035911383816520319</ixy>
-          <ixz>0.0001149799088050231</ixz>
-          <iyy>0.0017151484993571059</iyy>
-          <iyz>-1.563921204261271e-05</iyz>
-          <izz>0.001211247721448517</izz>
+          <ixx>0.0038915515239194959</ixx>
+          <ixy>-0.00036061997319758563</ixy>
+          <ixz>0.00012858220992634781</ixz>
+          <iyy>0.0038911217310212418</iyy>
+          <iyz>-2.2428411962177809e-06</iyz>
+          <izz>0.0032142603420267932</izz>
         </inertia>
       </inertial>
       <collision name='panda_link7_collision'>
@@ -736,7 +736,7 @@
       </visual>
     </link>
     <plugin name='ign_ros2_control::IgnitionROS2ControlPlugin' filename='ign_ros2_control-system'>
-      <parameters>/home/josa/thesis/install/panda_moveit_config/share/panda_moveit_config/config/controllers_effort.yaml</parameters>
+      <parameters>/home/sysgen/Projects/joel/install/panda_moveit_config/share/panda_moveit_config/config/controllers_effort.yaml</parameters>
     </plugin>
     <frame name='panda_hand_tcp_virtual_joint' attached_to='panda_hand'>
       <pose>0 0 0.1034 0 -0 0</pose>
