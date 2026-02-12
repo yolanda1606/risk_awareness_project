@@ -3,7 +3,18 @@
 
   <xacro:arg name="arm_id" default="panda"/>
 
-  <xacro:include filename="$(find panda_description)/urdf/panda.urdf.xacro"/>
+  <xacro:include filename="$(find panda_description)/urdf/panda_arm.xacro"/>
+
+  <link name="world"/>
+
+  <xacro:panda_arm base_parent="world" prefix="$(arg arm_id)_" />
+
+  <gazebo>
+    <plugin filename="libignition-gazebo-joint-state-publisher-system.so" 
+            name="ignition::gazebo::systems::JointStatePublisher">
+      <topic>model/$(arg arm_id)/joint_state</topic>
+    </plugin>
+  </gazebo>
 
   <xacro:macro name="paint_link_white" params="link_name">
     <gazebo reference="${link_name}">
@@ -25,8 +36,6 @@
   <xacro:paint_link_white link_name="$(arg arm_id)_link5"/>
   <xacro:paint_link_white link_name="$(arg arm_id)_link6"/>
   <xacro:paint_link_white link_name="$(arg arm_id)_link7"/>
-  <xacro:paint_link_white link_name="$(arg arm_id)_hand"/>
-  <xacro:paint_link_white link_name="$(arg arm_id)_leftfinger"/>
-  <xacro:paint_link_white link_name="$(arg arm_id)_rightfinger"/>
+  <xacro:paint_link_white link_name="$(arg arm_id)_link8"/>
 
 </robot>
